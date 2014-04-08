@@ -1,0 +1,5 @@
+小圆剧场 10bit 720P
+x264_64_tMod-10bit-all.exe --preset slow --level 4.1 --acodec none --tune animation -b 10 --ref 9  --weightb --weightp 2 --me esa --deblock 1:-1:-1 --subme 11 --merange 24  --demuxer lavf --crf 17 --qcomp 0.75 --vf resize:1280,720,,,,spline36 --no-mbtree --thread-input --output Xiaoyuan.mkv "M:\00000.ts" 2>10bit720P.txt
+
+小圆剧场 8bit 720P （PAD版）
+x264_64_tMod-8bit-all.exe --preset slower --acodec none --tune animation -b 9 --ref 9  --weightb --weightp 2 --me esa --deblock 1:-1:-1 --subme 11 --merange 32  --demuxer lavf --crf 20.5 --qcomp 0.75 --vf resize:1280,720,,,,spline36 --no-mbtree --thread-input --output Xiaoyuan8bit.mkv "M:\00000.ts" 2>8bit720P.txt
