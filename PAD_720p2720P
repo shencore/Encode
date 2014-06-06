@@ -1,0 +1,46 @@
+//注释：
+//1.仅供720p的iNT资源压制为PAD，音频请提前处理好，文件格式m4a，文件名与Source保持一致
+//2.这部分理论上说与环境无关 但最好配置好
+//3.仅供真人影片，不添加字幕
+
+@ECHO OFF & CD/D "%~dp0"
+
+set x264_common_settings=--level 3.1 --level-force --demuxer lavf --preset slower --tune film --no-8x8dct -b 6 --subme 10 --merange 24
+
+::判断x86 or x64，选择合适的x264
+if /i %PROCESSOR_ARCHITECTURE%==amd64 set flag=1
+if defined PROCESSOR_ARCHITEW6432 set flag=1
+
+if defined flag (
+
+set x264="x264\x264_64_tMod-8bit-all.exe"
+
+) else (
+
+set x264="x264\x264_32_tMod-8bit-all.exe"
+
+)
+
+:Enc1
+if "%~1"=="" goto :STOP
+
+%x264% %x264_common_settings% --pass 1 --stats "%~dpn1_stat.log" --bitrate 2000 --vf pad:,,,,1280,720 --log-file "%~dpn1_pass1.log" --acodec none  -o NUL "%~1" 2>"%~dpn1_pass1.log"
+
+%x264% %x264_common_settings% --pass 2 --stats "%~dpn1_stat.log" --bitrate 2000 --vf pad:,,,,1280,720 --log-file "%~dpn1_pass2.log" --audiofile "%~dpn1.m4a" --acodec copy  -o "%~dpn1-BYRPAD.mp4" "%~1" 2>"%~dpn1_pass2.log"
+
+shift /1
+goto :Enc1
+
+::::::::::::::::::::::::::::::::::::::
+::deint
+
+::%x264% %x264_common_settings% --pass 1 --stats "%~dpn1_stat.log" --bitrate 2000 --vf yadif/resize:1280,720,,,,lanczos --log-file "%~dpn1_pass1.log" --acodec none  -o NUL "%~1"
+
+::%x264% %x264_common_settings% --pass 2 --stats "%~dpn1_stat.log" --bitrate 2000 --vf yadif/resize:1280,720,,,,lanczos --log-file "%~dpn1_pass2.log" --audiofile "%~dpn1_a.m4a" --acodec copy  -o "%~dpn1-BYRPAD.mp4" "%~1"
+
+::shift /1
+::goto :Enc1
+::::::::::::::::::::::::::::::::::::::
+
+:STOP
+echo. & pause
